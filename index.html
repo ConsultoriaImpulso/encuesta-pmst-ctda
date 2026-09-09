@@ -1,0 +1,1151 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Encuesta de movilidad · CTDA</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* tokens.css — identidad visual compartida (paleta, sombras, tipografías).
+   Extraído de reference/. Todo componente nuevo usa estas variables; no se
+   introducen colores, sombras ni tipografías fuera de aquí.
+   Nota: --line y --line-strong se definen en cada página, porque la encuesta
+   las usa translúcidas y el dashboard sólidas. */
+
+:root {
+  /* Paleta Impulso by PONS */
+  --petrol: #0E3B3D;       /* verde petróleo · estructura, fondos oscuros */
+  --petrol-2: #14504F;
+  --petrol-deep: #082828;
+  --mint: #7FE5C0;         /* menta · acento principal */
+  --mint-soft: #C5F1DD;
+  --mint-deep: #4FC9A0;
+  --cream: #F7F1E8;        /* crema · fondos claros */
+  --cream-warm: #EFE7D8;
+  --ink: #0E3B3D;
+  --ink-soft: #2A4F4F;
+  --text-muted: #5C7170;
+  --text-light: #8FA2A0;
+  --accent-warm: #E8A87C;  /* acento cálido secundario para gráficas */
+  --green-success: #4FC9A0;
+
+  --shadow-sm: 0 1px 2px rgba(14, 59, 61, 0.05);
+  --shadow: 0 1px 3px rgba(14, 59, 61, 0.06), 0 8px 24px rgba(14, 59, 61, 0.05);
+  --shadow-lg: 0 4px 12px rgba(14, 59, 61, 0.10), 0 16px 48px rgba(14, 59, 61, 0.08);
+
+  /* Tipografías */
+  --font-display: 'Sora', -apple-system, system-ui, sans-serif;
+  --font-sans: 'Inter', -apple-system, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+}
+
+/* survey.css — estilos de la encuesta, extraidos fiel de reference/.
+   La paleta vive en ../assets/tokens.css; aqui solo las lineas translucidas
+   propias de la encuesta y los componentes. */
+
+:root {
+  --line: rgba(14, 59, 61, 0.14);
+  --line-strong: rgba(14, 59, 61, 0.28);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Inter', -apple-system, sans-serif;
+    background: var(--cream);
+    color: var(--ink);
+    min-height: 100vh;
+    line-height: 1.5;
+  }
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: radial-gradient(circle at 1px 1px, rgba(14,59,61,0.05) 1px, transparent 0);
+    background-size: 24px 24px;
+    pointer-events: none;
+    z-index: 0;
+  }
+  .container {
+    max-width: 780px;
+    margin: 0 auto;
+    padding: 0 24px;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* HEADER — petróleo arriba como en la web */
+  .top-bar {
+    background: var(--petrol);
+    border-bottom: 4px solid var(--mint);
+    padding: 22px 0;
+    margin: 0 -24px 0;
+    margin-bottom: 40px;
+  }
+  .top-bar-inner {
+    max-width: 780px;
+    margin: 0 auto;
+    padding: 0 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+  }
+  .client-logo {
+    height: 30px;
+    width: auto;
+    display: block;
+    flex-shrink: 0;
+  }
+  @media (max-width: 480px) {
+    .client-logo { height: 24px; }
+  }
+  .brand-logo {
+    display: flex;
+    flex-direction: column;
+    line-height: 1;
+    color: white;
+  }
+  .brand-logo .name {
+    font-family: 'Sora', sans-serif;
+    font-weight: 700;
+    font-size: 26px;
+    letter-spacing: -0.04em;
+    color: white;
+  }
+  .brand-logo .name .slash {
+    color: white;
+    display: inline-block;
+    transform: scaleX(-1) skewX(-12deg);
+    margin-right: -2px;
+    font-weight: 400;
+  }
+  .brand-logo .by {
+    font-weight: 400;
+    font-size: 10px;
+    color: rgba(255,255,255,0.65);
+    letter-spacing: 0.12em;
+    margin-top: 4px;
+    margin-left: 28px;
+  }
+
+  header {
+    padding: 0 0 0;
+    margin-bottom: 0;
+  }
+
+  h1 {
+    font-family: 'Sora', sans-serif;
+    font-size: clamp(34px, 5vw, 52px);
+    font-weight: 600;
+    line-height: 1.0;
+    letter-spacing: -0.035em;
+    margin-bottom: 16px;
+    color: var(--petrol);
+  }
+  h1 .accent {
+    color: var(--mint-deep);
+    font-style: italic;
+    font-weight: 400;
+  }
+  .lede {
+    font-size: 15px;
+    color: var(--text-muted);
+    max-width: 580px;
+    margin-bottom: 28px;
+    line-height: 1.6;
+  }
+  .meta-bar {
+    height: 5px;
+    background: var(--mint);
+    border-radius: 99px;
+    margin-bottom: 8px;
+  }
+  .meta-bar .pulse-dot {
+    display: inline-block;
+    width: 7px; height: 7px;
+    background: var(--petrol);
+    border-radius: 50%;
+    margin-right: 8px;
+    transform: translateY(-1px);
+  }
+
+  /* PROGRESS */
+  .progress-wrap {
+    position: sticky;
+    top: 0;
+    background: var(--cream);
+    z-index: 10;
+    padding: 16px 0;
+    border-bottom: 1px solid var(--line);
+    margin: 0 -24px 0;
+    padding-left: 24px;
+    padding-right: 24px;
+  }
+  .progress-bar {
+    height: 4px;
+    background: var(--cream-warm);
+    border-radius: 99px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    background: var(--mint-deep);
+    width: 0%;
+    transition: width 0.4s ease;
+    border-radius: 99px;
+  }
+  .progress-meta {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 8px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--text-muted);
+  }
+
+  /* SECTIONS */
+  .section {
+    padding: 56px 0 24px;
+    border-bottom: 1px solid var(--line);
+  }
+  .section:last-of-type { border-bottom: none; }
+  .section.hidden { display: none; }
+  .section-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: var(--mint-deep);
+    margin-bottom: 8px;
+    font-weight: 600;
+  }
+  .section-title {
+    font-family: 'Sora', sans-serif;
+    font-size: 28px;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    margin-bottom: 32px;
+    line-height: 1.1;
+    color: var(--petrol);
+  }
+  .section-title em {
+    font-style: italic;
+    color: var(--mint-deep);
+    font-weight: 400;
+  }
+
+  /* QUESTIONS */
+  .q { margin-bottom: 32px; padding-bottom: 8px; }
+  .q-label {
+    display: block;
+    font-size: 15px;
+    font-weight: 500;
+    margin-bottom: 4px;
+    line-height: 1.4;
+    color: var(--ink);
+  }
+  .q-code {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--mint-deep);
+    margin-right: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    font-weight: 600;
+  }
+  .q-help {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-bottom: 12px;
+    font-style: italic;
+  }
+
+  /* OPTIONS */
+  .options { display: flex; flex-direction: column; gap: 6px; }
+  .options.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+  .options.grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+  @media (max-width: 600px) {
+    .options.grid-2, .options.grid-3 { grid-template-columns: 1fr; }
+  }
+  .opt {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.15s;
+    background: white;
+    font-size: 14px;
+    color: var(--ink);
+  }
+  .opt:hover { border-color: var(--petrol); background: var(--cream); }
+  .opt input { accent-color: var(--mint-deep); cursor: pointer; }
+  .opt input:checked + span { font-weight: 600; }
+  .opt:has(input:checked) {
+    border-color: var(--petrol);
+    background: var(--mint-soft);
+    box-shadow: inset 3px 0 0 var(--mint-deep);
+  }
+
+  /* TEXT INPUTS */
+  .text-input, .number-input, .textarea-input {
+    width: 100%;
+    padding: 12px 16px;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    background: white;
+    font-family: inherit;
+    font-size: 14px;
+    color: var(--ink);
+    transition: border-color 0.15s;
+  }
+  .text-input:focus, .number-input:focus, .textarea-input:focus {
+    outline: none;
+    border-color: var(--mint-deep);
+    box-shadow: 0 0 0 3px var(--mint-soft);
+  }
+  .textarea-input { min-height: 100px; resize: vertical; font-family: inherit; }
+
+  /* LIKERT */
+  .likert-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 8px;
+    font-size: 13px;
+    background: white;
+    border-radius: 6px;
+    overflow: hidden;
+  }
+  .likert-table th {
+    text-align: center;
+    padding: 12px 4px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-weight: 600;
+    color: var(--text-muted);
+    border-bottom: 1px solid var(--line);
+    background: var(--cream-warm);
+  }
+  .likert-table th:first-child { text-align: left; padding-left: 16px; }
+  .likert-table td {
+    padding: 12px 4px;
+    border-bottom: 1px solid var(--line);
+    text-align: center;
+  }
+  .likert-table td:first-child {
+    text-align: left;
+    font-weight: 500;
+    padding-left: 16px;
+    color: var(--ink);
+  }
+  .likert-table tr:last-child td { border-bottom: none; }
+  .likert-table input { accent-color: var(--mint-deep); cursor: pointer; transform: scale(1.15); }
+
+  /* RANKING (drag-and-drop) */
+  .ranking-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .ranking-section-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--text-muted);
+    font-weight: 600;
+    padding: 4px 0;
+  }
+  .ranking-pool, .ranking-podium {
+    background: var(--cream-warm);
+    border: 1.5px dashed var(--line-strong);
+    border-radius: 8px;
+    padding: 8px;
+    min-height: 64px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .ranking-pool.drag-over, .ranking-podium.drag-over {
+    background: var(--mint-soft);
+    border-color: var(--mint-deep);
+    border-style: solid;
+  }
+  .ranking-podium { background: white; border-style: solid; border-color: var(--petrol); }
+  .podium-slot {
+    border: 1px dashed var(--line-strong);
+    border-radius: 6px;
+    padding: 14px 16px;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: var(--cream);
+    transition: all 0.15s;
+    position: relative;
+  }
+  .podium-slot.filled {
+    border-style: solid;
+    border-color: var(--petrol);
+    background: var(--mint-soft);
+  }
+  .podium-slot.drag-over {
+    border-color: var(--mint-deep);
+    border-style: solid;
+    background: var(--mint-soft);
+    transform: scale(1.02);
+  }
+  .podium-rank {
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    font-family: 'Sora', sans-serif;
+    font-weight: 700;
+    font-size: 13px;
+    color: white;
+    flex-shrink: 0;
+  }
+  .podium-rank.r1 { background: var(--petrol); }
+  .podium-rank.r2 { background: var(--mint-deep); }
+  .podium-rank.r3 { background: var(--mint); color: var(--petrol); }
+  .podium-slot:not(.filled) .podium-rank {
+    background: transparent;
+    border: 1.5px dashed var(--line-strong);
+    color: var(--text-light);
+  }
+  .podium-slot-empty-text {
+    color: var(--text-light);
+    font-size: 13px;
+    font-style: italic;
+  }
+  .ranking-item {
+    background: white;
+    border: 1px solid var(--line-strong);
+    border-radius: 6px;
+    padding: 10px 14px;
+    cursor: grab;
+    user-select: none;
+    font-size: 13px;
+    color: var(--ink);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    transition: all 0.15s;
+  }
+  .ranking-item:hover { border-color: var(--petrol); transform: translateX(2px); }
+  .ranking-item:active { cursor: grabbing; }
+  .ranking-item.dragging { opacity: 0.4; }
+  .ranking-item .grip {
+    color: var(--text-light);
+    font-size: 14px;
+    line-height: 1;
+    letter-spacing: -2px;
+  }
+  .ranking-item .remove-btn {
+    margin-left: auto;
+    background: transparent;
+    border: none;
+    color: var(--text-light);
+    cursor: pointer;
+    padding: 0 4px;
+    font-size: 14px;
+    line-height: 1;
+  }
+  .ranking-item .remove-btn:hover { color: var(--petrol); }
+  .ranking-help {
+    font-size: 11px;
+    color: var(--text-muted);
+    text-align: center;
+    padding: 4px;
+    font-style: italic;
+  }
+  @media (max-width: 600px) {
+    .ranking-item { font-size: 12px; padding: 12px 14px; }
+  }
+
+  /* CONDITIONAL */
+  .conditional { display: none; }
+  .conditional.show { display: block; animation: slideIn 0.3s ease; }
+  @keyframes slideIn {
+    from { opacity: 0; transform: translateY(-6px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .module-banner {
+    background: var(--petrol);
+    color: white;
+    padding: 16px 20px;
+    border-radius: 6px;
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    font-size: 13px;
+    position: relative;
+    overflow: hidden;
+  }
+  .module-banner::before {
+    content: '';
+    position: absolute;
+    top: 0; right: 0;
+    width: 100px; height: 100%;
+    background: radial-gradient(circle at right, rgba(127,229,192,0.20) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .module-banner .dot {
+    width: 8px; height: 8px;
+    background: var(--mint);
+    border-radius: 50%;
+    flex-shrink: 0;
+    box-shadow: 0 0 0 3px rgba(127,229,192,0.25);
+  }
+  .module-banner em {
+    color: var(--mint);
+    font-style: italic;
+    font-weight: 600;
+  }
+
+  /* SUBMIT */
+  .submit-section {
+    padding: 48px 0;
+    text-align: center;
+  }
+  .submit-btn {
+    background: var(--petrol);
+    color: var(--mint);
+    border: none;
+    padding: 18px 48px;
+    font-family: 'Sora', sans-serif;
+    font-size: 17px;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    cursor: pointer;
+    border-radius: 99px;
+    transition: all 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+  .submit-btn::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--mint);
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
+  }
+  .submit-btn:hover::before { transform: translateX(0); }
+  .submit-btn:hover { color: var(--petrol); }
+  .submit-btn span { position: relative; z-index: 1; }
+  .submit-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+  .privacy-note {
+    margin-top: 16px;
+    font-size: 12px;
+    color: var(--text-muted);
+    max-width: 420px;
+    margin-left: auto;
+    margin-right: auto;
+    line-height: 1.5;
+  }
+
+  /* SUCCESS */
+  .success-screen {
+    display: none;
+    padding: 80px 0;
+    text-align: center;
+  }
+  .success-screen.show { display: block; }
+  .success-mark {
+    width: 80px; height: 80px;
+    background: var(--mint-deep);
+    color: white;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    margin: 0 auto 24px;
+    font-size: 36px;
+    box-shadow: 0 0 0 8px var(--mint-soft);
+  }
+  .success-screen h2 {
+    font-family: 'Sora', sans-serif;
+    font-size: 36px;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    margin-bottom: 12px;
+    color: var(--petrol);
+  }
+  .success-screen h2 em { color: var(--mint-deep); font-style: italic; font-weight: 400; }
+  .success-screen p { color: var(--text-muted); max-width: 480px; margin: 0 auto; }
+
+  footer {
+    padding: 32px 0;
+    text-align: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-light);
+    border-top: 1px solid var(--line);
+    margin-top: 48px;
+  }
+
+</style>
+</head>
+<body>
+<div class="container">
+
+  <div class="top-bar">
+    <div class="top-bar-inner">
+      <img class="client-logo" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAKwAAAAvCAYAAAB+FSGuAAAH30lEQVR42u2dfbAWVR3HP2f3eb2PcBkFpGsQhTiFeuUCTWVDNzRMxabCpMkcxNAGoazBJi1rerWcxjQYm7HEFNMmlV5UMpNqNJmujuUMc70iYoYRb8IF7pX7PPd52T39seeB9bDPfXafuzA8T+czs/PcPXvO2XN2v/vb3/mdsyCklBgMzYJlLoHBCNZgMII1GIxgDUawBoMRrMFgBGswgjUYjGANBiNYgxGswWAEazAYwRqMYA2GJhPsdOBM4AxzWZuKy4ACcLbanwkMAXm1vQG8w5f/OZU/79sKwMO+PGcAB7Q89bYdYRqbGEVHO4FFwDxgGtCu6nOAQeB14G/AQ6qTVaYAdwPJGC7214AeYLKqMxWiTFndhJeBvwN/GWUbOtS5s760YeAaYPuxUFjv7qJ8bkeJV/aV2J+vUHYAJG1Ji0ljkpw9KcXCGTkRsjobyPiMlwW0+Y67gL+ujNp00r6/haojFaFbw8dKsFOA7wCf1m6Sv84JapsDXAf8XonrVSAHfCSmezdB/eaA+Q3WsRW4F/hBg+WvBC4MSF8KfDtOob68tyTXvZSn740ydiKJ60ikK0BKQFByYbAi2TpQYf2WvbJ7aoYru8aIBk4lfSKVAcdqlQmTj5DlY3EJ5gHPAEtqiLXWQ/Ep4Gngw0ARKMV0D11fZ4ujcGVuBvpU/6KytEb6VXGK9fEtQ/KHzwyyuV8iHYdKsYBbKSNdByldb3MdnHKRSjFPoeyy4XXJ9U/sb6lPSqIIthv4nbKwQVRdgfwIr84HVHkRU/tFjNdiBvAYsDBCmSuUO1TrTXR1HA37bd8h+cCLRUoVF6c0HMoYSdelMjzE7iFY9mi/fLW/3BLCDesSnAbcp/xUnR5gLfAs0K98menKql7us8TDwE3AU8BFAQ+LBM4HbtTS1wE/qyHODSO0+V/Acu3uCuBkoAtYoAaJfnLAPcr//meI67I8xPE1o7lBG7cV5LqXhg9b0qg45SJvkmZ1zwCrLxn/fyPYbwVY1grwTeCWGmJ5Qg1G1irr+lngEXW81kDn5Bp1/bmBvg0AT9Y49mvgBuDLyh3wDzLGAquBD4Zwj96nPXB/VA9j9eHqAi4GHm/0Bt2/6U3AakisftHut9v46bMH5Yr3jxPNLNgwLsF0JTadWmLVre8lalDySIhzJWOMZITp20+Ur1nW0s8FPl6n7ArtHK8B1wLbtHxfbPTm/GrToDwk07hOedQ3ulIs0LO9RLMT5qZ+QrNA1VjcLSHP8Qqw8QS+Bg8BvwxIv3yEMu9RltPPg8B/1K+f84HZDboDOOWYRCYlJNKseX5AtrpguwPS7qa1uFO5OH7mjJD/81qUJK98fNRvQXtrLI/aoE27ivJg2UY6ldg66VbK9O4p0uqCnRrgu/a0mGCfB3ZpaRN56wzPSNb3SWCL+ntzgM996Qh1BfLagTKWnYy1k9J16M+7LS/Ycdr+ELCf1kPvU0ZFDXRWKjH70SMBd2n77dSO1wayb8gh7n+VR0oXV9j07SnJVhasE1CmFRfN2PoblCMTE36u0fZfBP6gpT2mLK2fJVEaU3SOkaaEoOQ0rxsbRnj7tP0cXly21ThV28/jTYT4uQx4t5Z2b4369PTJyvcNRdoW8U6LHHYLXNKJ5o1shQkZbQFmaSK/gLcuaGl2PsaRdQlV/gvs1NKCBk9L8CZJdE4KSLsW+Hmop+ckG3HUy220xtXCxmHGxJRoZcH+CfiMlnY18L0WEuxXAtKe0vbPBeYG5Dsrwnlm4sWl19fLOO2UFE7lYLyCtW0mtjW3Nxem9WsDRtBTODreyAgj6ptO4GtwK/ChgEjIfQHW1Y7hfF8Ik+nMiSkxIUOskQLLTjLzbemWFyzAbQFpi4BHA3w6PzcCvwC+D/z4OPetXvxmNvAb4PqAY/fjhbqqnM7RM18F5TbU2wpaufOA94bpQPc7s1jJeAQrhIXlFFncNbapp2YTEazQArzlgbrv1423bmCjssRZ4ByV3y/mlcpPXHyc+nYa3myc1B7Q8XiLXroIXmDcx9FLA5cG+KRfBe4I0Y7rgFW+/epEQt3lh5eeNUY8vW2v3JdI4VZGN+Nlp7PMm9z8C7aizNMvVr5Xp5Y+VlnbRWHedMd51H9DxDK9KhIQ1Hc/u0OKFbyFNF/XohALge8C/65XeMmsMdzecwhp2Ui3sUGYncrQkSlx1ezxotkFG8UD387oVh6tp8E59eOAo3z1To7MWPl91w4t7cGI9T8c8JB/LkzBWR0ZcUVnFsuysOzo64DsdJbxGZcfXdj8Yo0qWPA+FFuAFzzvDVlmM7BMuQ+NWPxUyH40MprYibfwZR61A/srA9LuiXieoPwrwhb+6PScWDYnRy4lSKSzCFFfe8JOkMi0cXq7ZNXFp7SEWKO6BH7WqG2+GkR0ApOUaErAHrwZoL/irRENywt430FVnS2B96FgmIfiGyFG8QLvU5o9eN9y1VtF1qEE7W/PbmBTxOv1Al4M9lRfXRbe0s2tYSqYOzUr5k7NsqpnQP5jh4W000jXwXUqnqsgBJaVQNg2CEF7wmH+tASfDP8xYksLtsoGRl71H5XeCJZb5+ZjcH124n1wGQd3xlHJlz7QLgDW9Q3JzXtddg3CgTwkLcGEHLx9nMU5k1Kc965sSwn1sMUx/+2RoZV9WIPBCNZgMII1GMEaDEawBoMRrMEI1mA4Afgf79YiXhxQ7bYAAAAASUVORK5CYII=" alt="CTDA">
+      <a href="#" class="brand-logo" style="text-decoration: none;">
+        <span class="name"><span class="slash">/</span>mpulso</span>
+        <span class="by">by PONS</span>
+      </a>
+    </div>
+  </div>
+
+  <header>
+    <h1>Encuesta de <em class="accent">movilidad</em><br>al puesto de trabajo</h1>
+    <p class="lede">Tu respuesta nos ayuda a diseñar un Plan de Movilidad Sostenible al Trabajo (PMST). Encuesta totalmente anónima.</p>
+    <div class="meta-bar"></div>
+  </header>
+
+  <div class="progress-wrap">
+    <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+    <div class="progress-meta">
+      <span id="progressPct">0% completado</span>
+      <span id="progressSection">Cargando…</span>
+    </div>
+  </div>
+
+  <form id="surveyForm">
+    <div id="surveySections"></div>
+
+    <div class="submit-section">
+      <button type="submit" class="submit-btn"><span>Enviar respuesta</span></button>
+      <p class="privacy-note">Tu respuesta es <strong>completamente anónima</strong>. Los datos se utilizarán únicamente para elaborar el diagnóstico del PMST de tu empresa.</p>
+    </div>
+  </form>
+
+  <div class="success-screen" id="successScreen">
+    <div class="success-mark">✓</div>
+    <h2>¡Gracias por <em>responder</em>!</h2>
+    <p>Tu respuesta ha sido registrada de forma anónima. Junto a la del resto de la plantilla, ayudará a diseñar un Plan de Movilidad Sostenible al Trabajo más útil para todos.</p>
+  </div>
+
+  <footer>
+    \mpulso by PONS · Sistema PMST · v.1.1
+  </footer>
+
+</div>
+<script>window.__IMPULSO_SURVEY = {"slug":"pms-ctda","schema":{"version":"1.1","locale":"es-ES","meta":{"title":"Encuesta de movilidad al puesto de trabajo","lede":"Tu respuesta nos ayuda a diseñar un Plan de Movilidad Sostenible al Trabajo (PMST) ajustado a las necesidades reales de la plantilla. Se tarda en responder unos 6-8 minutos. Es anónima.","estimatedMinutes":"6-8"},"_doc":{"questionTypes":"single (radio) | multi (checkbox) | text | number | textarea | likert (filas x escala) | ranking (podio top-N desde un pool)","option":"string (valor = etiqueta) u objeto { value, label } cuando difieren","columns":"pista de maquetación: nº de columnas de la rejilla de opciones (1 por defecto)","maxSelections":"máximo de opciones marcables en una pregunta multi","showIf":"condición de visibilidad. { anyOf|allOf: [ { question, in:[...] } | { question, intersects:[...] } ] }. 'in' compara el valor de una pregunta single; 'intersects' comprueba si una multi contiene alguno","ranking":"el envío produce \u003ccode>_rank_1, \u003ccode>_rank_2, ... con los valores elegidos en orden","likert":"el envío produce un valor por cada fila (campo 'name' de la fila)","required":"refleja el atributo required de la maqueta. La validación del backend se reconcilia con esto en Fase 2"},"sections":[{"id":"A","name":"Sección A · Contexto laboral","title":"Contexto laboral","titleHtml":"Contexto \u003cem>laboral\u003c/em>","questions":[{"type":"single","label":"Género","options":["Masculino","Femenino","Otros"],"columns":3,"code":"A6","num":"1."},{"type":"text","label":"Si has marcado «Otros», ¿cómo te identificas?","help":"Solo si has marcado «Otro»","maxLength":120,"placeholder":"Escríbelo aquí","showIf":{"anyOf":[{"question":"A6","in":["Otros"]}]},"code":"A6_otro","num":"1.1"},{"type":"single","label":"Rango de edad","options":["Menor de 21 años","21-30 años","31-40 años","41-50 años","51-60 años","Mayor de 60 años"],"columns":2,"code":"A7","num":"2."},{"type":"single","label":"Antigüedad en la empresa","options":["Menos de 2 años","Entre 2 y 5 años","Más de 5 años"],"columns":3,"code":"A8","num":"3."},{"type":"single","label":"Tipo de jornada","options":["Jornada completa","Jornada parcial","Turnos","Horario variable"],"columns":2,"required":true,"code":"A3","num":"4."},{"type":"single","label":"Categoría profesional","options":["Digitalizador","Operador","Técnico de apoyo / Técnico de campo / Técnico de sistemas","Laboratorio","Supervisor","Dirección","Otros"],"columns":1,"code":"A9","num":"5."},{"type":"text","label":"Otra categoría profesional","help":"Solo si has marcado «Otro»","maxLength":120,"placeholder":"Escríbelo aquí","showIf":{"anyOf":[{"question":"A9","in":["Otros"]}]},"code":"A9_otro","num":"5.1"},{"type":"single","label":"Departamento en el que prestas tus servicios mayoritariamente","options":["Tramitación","Digitalización","Atención telefónica","Tramitación de vehículos","Servicios técnicos o de apoyo (trabajos de campo, sistemas, servicios auxiliares)"],"columns":1,"code":"A10","num":"6."},{"type":"single","label":"Hora habitual de entrada","options":["Antes de 07:00",{"value":"07:00-08:00","label":"07:00 - 08:00"},{"value":"08:00-09:00","label":"08:00 - 09:00"},{"value":"09:00-10:00","label":"09:00 - 10:00"},"Después de 10:00","Variable"],"columns":2,"required":true,"code":"A4","num":"7."},{"type":"single","label":"Hora habitual de salida","options":["Antes de 15:00",{"value":"15:00-16:00","label":"15:00 - 16:00"},{"value":"16:00-17:00","label":"16:00 - 17:00"},{"value":"17:00-18:00","label":"17:00 - 18:00"},{"value":"18:00-19:00","label":"18:00 - 19:00"},"Después de 19:00","Variable"],"columns":2,"required":true,"code":"A5","num":"8."}]},{"id":"B","name":"Sección B · Zona de residencia","title":"Zona de residencia","titleHtml":"Zona de \u003cem>residencia\u003c/em>","questions":[{"type":"text","label":"Indica el código postal de tu domicilio","help":"Solo el código postal, no la dirección.","placeholder":"28004","required":true,"pattern":"[0-9]{5}","maxLength":5,"code":"B1","num":"9."},{"type":"multi","label":"Disponibilidad de medios de transporte en tu hogar","options":["Coche","Moto",{"value":"Bicicleta","label":"Bicicleta / bicicleta eléctrica"},{"value":"Patinete/VMP","label":"Patinete / VMP"},"Ninguno","Otro"],"help":"Marca todos los disponibles","columns":2,"code":"B2","num":"10."},{"type":"text","label":"Otros medios de transporte en el hogar","help":"Solo si has marcado «Otro»","maxLength":120,"placeholder":"Escríbelo aquí","showIf":{"anyOf":[{"question":"B2","intersects":["Otro"]}]},"code":"B2_otro","num":"10.1"}]},{"id":"C","name":"Sección C · Tu desplazamiento","title":"Tu desplazamiento habitual","titleHtml":"Tu desplazamiento \u003cem>habitual\u003c/em>","questions":[{"type":"single","label":"Modo principal de transporte","options":["A pie",{"value":"Bicicleta","label":"Bicicleta / bicicleta eléctrica"},{"value":"Patinete/VMP","label":"Patinete / VMP"},"Transporte público",{"value":"Lanzadera","label":"Autobús-Lanzadera"},{"value":"Coche","label":"Coche (propio, compartido, empresa)"},{"value":"Moto/ciclomotor","label":"Moto / ciclomotor"},{"value":"Taxi/VTC","label":"Taxi / VTC"},"Otro"],"columns":2,"required":true,"code":"C1","num":"11."},{"type":"single","label":"¿Qué modo de transporte público usas en la IDA?","options":[{"value":"Bus","label":"Autobús (urbano o interurbano)"},{"value":"Tren/Cercanías","label":"Tren / Cercanías"}],"columns":2,"showIf":{"anyOf":[{"question":"C1","in":["Transporte público"]}]},"code":"C1_tp","num":"12."},{"type":"text","label":"¿Cuál es ese otro modo de IDA?","help":"Solo si has marcado «Otro»","maxLength":120,"placeholder":"Escríbelo aquí","showIf":{"anyOf":[{"question":"C1","in":["Otro"]}]},"code":"C1_otro","num":"12.1"},{"type":"single","label":"Modo principal de VUELTA","options":["A pie",{"value":"Bicicleta","label":"Bicicleta / bicicleta eléctrica"},{"value":"Patinete/VMP","label":"Patinete / VMP"},"Transporte público",{"value":"Lanzadera","label":"Autobús-Lanzadera"},{"value":"Coche","label":"Coche (propio, compartido, empresa)"},{"value":"Moto/ciclomotor","label":"Moto / ciclomotor"},{"value":"Taxi/VTC","label":"Taxi / VTC"},"Otro"],"columns":2,"required":true,"code":"C2","num":"13."},{"type":"single","label":"¿Qué modo de transporte público usas en la VUELTA?","options":[{"value":"Bus","label":"Autobús (urbano o interurbano)"},{"value":"Tren/Cercanías","label":"Tren / Cercanías"}],"columns":2,"showIf":{"anyOf":[{"question":"C2","in":["Transporte público"]}]},"code":"C2_tp","num":"14."},{"type":"text","label":"¿Cuál es ese otro modo de VUELTA?","help":"Solo si has marcado «Otro»","maxLength":120,"placeholder":"Escríbelo aquí","showIf":{"anyOf":[{"question":"C2","in":["Otro"]}]},"code":"C2_otro","num":"14.1"},{"type":"single","label":"¿Combinas varios modos en el viaje?","options":[{"value":"No, un solo modo","label":"Un solo modo, el principal"},"Sí, 2 modos","Sí, 3 o más"],"columns":3,"required":true,"code":"C3","num":"15."},{"type":"single","label":"Segundo modo de transporte de IDA","options":["A pie",{"value":"Bicicleta","label":"Bicicleta / bicicleta eléctrica"},{"value":"Patinete/VMP","label":"Patinete / VMP"},"Transporte público",{"value":"Lanzadera","label":"Autobús-Lanzadera"},{"value":"Coche","label":"Coche (propio, compartido, empresa)"},{"value":"Moto/ciclomotor","label":"Moto / ciclomotor"},{"value":"Taxi/VTC","label":"Taxi / VTC"},"Otro"],"help":"El que combinas con tu modo principal. Marca solo uno","columns":2,"showIf":{"anyOf":[{"question":"C3","in":["Sí, 2 modos"]}]},"code":"C4","num":"16."},{"type":"single","label":"¿Qué modo de transporte público usas en la IDA?","options":[{"value":"Bus","label":"Autobús (urbano o interurbano)"},{"value":"Tren/Cercanías","label":"Tren / Cercanías"}],"columns":2,"showIf":{"anyOf":[{"question":"C4","in":["Transporte público"]}]},"code":"C4_tp","num":"17."},{"type":"text","label":"¿Cuál es ese otro segundo modo de IDA?","help":"Solo si has marcado «Otro»","maxLength":120,"placeholder":"Escríbelo aquí","showIf":{"anyOf":[{"question":"C4","in":["Otro"]}]},"code":"C4_otro","num":"17.1"},{"type":"single","label":"Segundo modo de transporte de VUELTA","options":["A pie",{"value":"Bicicleta","label":"Bicicleta / bicicleta eléctrica"},{"value":"Patinete/VMP","label":"Patinete / VMP"},"Transporte público",{"value":"Lanzadera","label":"Autobús-Lanzadera"},{"value":"Coche","label":"Coche (propio, compartido, empresa)"},{"value":"Moto/ciclomotor","label":"Moto / ciclomotor"},{"value":"Taxi/VTC","label":"Taxi / VTC"},"Otro"],"help":"El que combinas con tu modo principal. Marca solo uno","columns":2,"showIf":{"anyOf":[{"question":"C3","in":["Sí, 2 modos"]}]},"code":"C4b","num":"18."},{"type":"single","label":"¿Qué modo de transporte público usas en la VUELTA?","options":[{"value":"Bus","label":"Autobús (urbano o interurbano)"},{"value":"Tren/Cercanías","label":"Tren / Cercanías"}],"columns":2,"showIf":{"anyOf":[{"question":"C4b","in":["Transporte público"]}]},"code":"C4b_tp","num":"19."},{"type":"text","label":"¿Cuál es ese otro segundo modo de VUELTA?","help":"Solo si has marcado «Otro»","maxLength":120,"placeholder":"Escríbelo aquí","showIf":{"anyOf":[{"question":"C4b","in":["Otro"]}]},"code":"C4b_otro","num":"19.1"},{"type":"multi","label":"Modos complementarios al principal en IDA","options":["A pie",{"value":"Bicicleta","label":"Bicicleta / bicicleta eléctrica"},{"value":"Patinete/VMP","label":"Patinete / VMP"},"Transporte público",{"value":"Lanzadera","label":"Autobús-Lanzadera"},{"value":"Coche","label":"Coche (propio, compartido, empresa)"},{"value":"Moto/ciclomotor","label":"Moto / ciclomotor"},{"value":"Taxi/VTC","label":"Taxi / VTC"},"Otro"],"help":"Además del principal que ya has indicado. Marca todos los que uses","columns":2,"showIf":{"anyOf":[{"question":"C3","in":["Sí, 3 o más"]}]},"code":"C4c","num":"20."},{"type":"multi","label":"¿Qué modo de transporte público usas en la IDA?","options":[{"value":"Bus","label":"Autobús (urbano o interurbano)"},{"value":"Tren/Cercanías","label":"Tren / Cercanías"}],"columns":2,"showIf":{"anyOf":[{"question":"C4c","intersects":["Transporte público"]}]},"code":"C4c_tp","num":"21."},{"type":"text","label":"¿Qué otro modo complementario usas en IDA?","help":"Solo si has marcado «Otro»","maxLength":120,"placeholder":"Escríbelo aquí","showIf":{"anyOf":[{"question":"C4c","intersects":["Otro"]}]},"code":"C4c_otro","num":"21.1"},{"type":"multi","label":"Modos complementarios al principal en VUELTA","options":["A pie",{"value":"Bicicleta","label":"Bicicleta / bicicleta eléctrica"},{"value":"Patinete/VMP","label":"Patinete / VMP"},"Transporte público",{"value":"Lanzadera","label":"Autobús-Lanzadera"},{"value":"Coche","label":"Coche (propio, compartido, empresa)"},{"value":"Moto/ciclomotor","label":"Moto / ciclomotor"},{"value":"Taxi/VTC","label":"Taxi / VTC"},"Otro"],"help":"Además del principal que ya has indicado. Marca todos los que uses","columns":2,"showIf":{"anyOf":[{"question":"C3","in":["Sí, 3 o más"]}]},"code":"C4d","num":"22."},{"type":"multi","label":"¿Qué modo de transporte público usas en la VUELTA?","options":[{"value":"Bus","label":"Autobús (urbano o interurbano)"},{"value":"Tren/Cercanías","label":"Tren / Cercanías"}],"columns":2,"showIf":{"anyOf":[{"question":"C4d","intersects":["Transporte público"]}]},"code":"C4d_tp","num":"23."},{"type":"text","label":"¿Qué otro modo complementario usas en VUELTA?","help":"Solo si has marcado «Otro»","maxLength":120,"placeholder":"Escríbelo aquí","showIf":{"anyOf":[{"question":"C4d","intersects":["Otro"]}]},"code":"C4d_otro","num":"23.1"},{"type":"single","label":"Tiempo total puerta a puerta (IDA)","options":[{"value":"\u003c15 min","label":"\u003c 15 min"},{"value":"15-29 min","label":"15 - 29 min"},{"value":"30-44 min","label":"30 - 44 min"},{"value":"45-59 min","label":"45 - 59 min"},{"value":"60-89 min","label":"60 - 89 min"},"90+ min"],"columns":3,"required":true,"code":"C5","num":"24."},{"type":"single","label":"Tiempo total puerta a puerta (VUELTA)","options":[{"value":"\u003c15 min","label":"\u003c 15 min"},{"value":"15-29 min","label":"15 - 29 min"},{"value":"30-44 min","label":"30 - 44 min"},{"value":"45-59 min","label":"45 - 59 min"},{"value":"60-89 min","label":"60 - 89 min"},"90+ min"],"columns":3,"required":true,"code":"C6","num":"25."},{"type":"number","label":"Distancia aproximada domicilio - trabajo","help":"En kilómetros (un solo trayecto)","placeholder":"Ej. 12","min":0,"max":500,"step":0.5,"code":"C7","num":"26."},{"type":"ranking","label":"Motivos por los que usas tu modo actual","options":["Es el más rápido","Es el más barato","No tengo alternativa viable","Horarios incompatibles","Flexibilidad horaria","Conciliación personal","Seguridad","Comodidad",{"value":"Salud/actividad física","label":"Salud / actividad física"},{"value":"Fiabilidad","label":"Fiabilidad / puntualidad"},"Aparcamiento fácil","Otro"],"help":"Arrastra al podio los \u003cstrong>3 motivos principales\u003c/strong>, en orden de importancia (1 = el más importante)","max":3,"poolLabel":"Opciones disponibles","slotLabels":["Arrastra aquí el motivo más importante","Arrastra aquí el segundo motivo","Arrastra aquí el tercero"],"code":"C9","num":"27."},{"type":"text","label":"¿Cuál es ese otro motivo?","help":"Solo si has marcado «Otro»","maxLength":120,"placeholder":"Escríbelo aquí","showIf":{"anyOf":[{"question":"C9_rank_1","in":["Otro"]},{"question":"C9_rank_2","in":["Otro"]},{"question":"C9_rank_3","in":["Otro"]}]},"code":"C9_otro","num":"27.1"},{"type":"single","label":"¿Considerarías ir en bici o andando si existiera una ruta segura y cómoda?","options":["Sí","No",{"value":"Solo en ciertos días","label":"Solo en ciertos días / con buen tiempo"},{"value":"No aplica por distancia","label":"No aplica (es mi modo principal o vivo demasiado lejos)"}],"help":"Aunque ahora no lo hagas. Detectamos potencial oculto.","columns":2,"required":true,"code":"C10","num":"28."},{"type":"single","label":"¿Conoces alternativas reales para los desplazamientos al trabajo?","options":["Sí","No"],"help":"Otras formas viables de llegar al trabajo que hoy no usas","columns":2,"required":true,"code":"C11","num":"29."},{"type":"text","label":"¿Qué alternativas conoces?","help":"Escríbelas separadas por comas","maxLength":200,"placeholder":"Escríbelo aquí","showIf":{"anyOf":[{"question":"C11","in":["Sí"]}]},"code":"C11b","num":"30."},{"type":"text","label":"¿Qué te impide usar esa alternativa o cuál es la diferencia con tu modo principal?","maxLength":200,"placeholder":"Escríbelo aquí","showIf":{"anyOf":[{"question":"C11","in":["Sí"]}]},"code":"C11c","num":"31."}]},{"id":"D","name":"Módulo · Aparcamiento","conditional":true,"banner":"Módulo de \u003cem>aparcamiento\u003c/em> · si vas de pasajero, escoge la opción que usa tu conductor","showIf":{"anyOf":[{"question":"C1","in":["Coche","Moto/ciclomotor","Bicicleta","Patinete/VMP"]},{"question":"C2","in":["Coche","Moto/ciclomotor","Bicicleta","Patinete/VMP"]},{"question":"C4","in":["Coche","Moto/ciclomotor","Bicicleta","Patinete/VMP"]},{"question":"C4b","in":["Coche","Moto/ciclomotor","Bicicleta","Patinete/VMP"]},{"question":"C4c","intersects":["Coche","Moto/ciclomotor","Bicicleta","Patinete/VMP"]},{"question":"C4d","intersects":["Coche","Moto/ciclomotor","Bicicleta","Patinete/VMP"]}]},"title":"Aparcamiento","titleHtml":"\u003cem>Aparcamiento\u003c/em>","questions":[{"type":"single","label":"Si vienes en coche o moto: ¿dónde aparcas?","options":["Parking de la empresa","Parking cercano (pago)","Calle (gratuito)",{"value":"Calle (zona regulada/ORA)","label":"Calle (zona ORA)"}],"columns":2,"showIf":{"anyOf":[{"question":"C1","in":["Coche","Moto/ciclomotor"]},{"question":"C2","in":["Coche","Moto/ciclomotor"]},{"question":"C4","in":["Coche","Moto/ciclomotor"]},{"question":"C4b","in":["Coche","Moto/ciclomotor"]},{"question":"C4c","intersects":["Coche","Moto/ciclomotor"]},{"question":"C4d","intersects":["Coche","Moto/ciclomotor"]}]},"code":"D1","num":"32."},{"type":"single","label":"Tiempo medio buscando aparcamiento","options":[{"value":"0-2 min","label":"0 - 2 min"},{"value":"3-5 min","label":"3 - 5 min"},{"value":"6-10 min","label":"6 - 10 min"},{"value":">10 min","label":"> 10 min"}],"columns":3,"showIf":{"anyOf":[{"question":"C1","in":["Coche","Moto/ciclomotor"]},{"question":"C2","in":["Coche","Moto/ciclomotor"]},{"question":"C4","in":["Coche","Moto/ciclomotor"]},{"question":"C4b","in":["Coche","Moto/ciclomotor"]},{"question":"C4c","intersects":["Coche","Moto/ciclomotor"]},{"question":"C4d","intersects":["Coche","Moto/ciclomotor"]}]},"code":"D2","num":"33."},{"type":"single","label":"Si vienes en bici / VMP: ¿dónde lo dejas?","options":["Aparcabicis seguro dentro","Aparcabicis fuera",{"value":"Lo subo dentro/oficina","label":"Lo subo a la oficina"},"No hay sitio adecuado"],"columns":2,"showIf":{"anyOf":[{"question":"C1","in":["Bicicleta","Patinete/VMP"]},{"question":"C2","in":["Bicicleta","Patinete/VMP"]},{"question":"C4","in":["Bicicleta","Patinete/VMP"]},{"question":"C4b","in":["Bicicleta","Patinete/VMP"]},{"question":"C4c","intersects":["Bicicleta","Patinete/VMP"]},{"question":"C4d","intersects":["Bicicleta","Patinete/VMP"]}]},"code":"D3","num":"34."}]},{"id":"E","name":"Sección · Barreras, facilidades y seguridad","title":"Barreras, facilidades y seguridad","titleHtml":"Barreras, facilidades y \u003cem>seguridad\u003c/em>","questions":[{"type":"multi","label":"¿Qué instalaciones te ayudarían a cambiar el modo de transporte?","options":["Aparcabicis cubierto","Aparcabicis seguro cerrado",{"value":"Duchas/vestuarios","label":"Duchas / vestuarios"},"Taquillas","Carga coche eléctrico",{"value":"Carga eBike/VMP","label":"Carga eBike / VMP"},{"value":"Mejor iluminación/seguridad","label":"Mejor iluminación / seguridad"},"Mejora accesos peatonales",{"value":"Restaurante/cafetería","label":"Restaurante / cafetería"},"Ninguna"],"help":"Marca todas las que apliquen","columns":2,"code":"D4","num":"35."},{"type":"multi","label":"Principales barreras para cambiar","options":[{"value":"TP lento","label":"Transporte público lento"},{"value":"TP poco frecuente","label":"TP poco frecuente / fiable"},"Demasiados transbordos",{"value":"Paradas lejos","label":"Paradas / estaciones lejos"},{"value":"Coste TP","label":"Coste del TP"},{"value":"Falta rutas seguras","label":"Falta de rutas seguras"},"Tráfico peligroso","Inseguridad personal",{"value":"Clima/pendiente","label":"Clima / pendiente"},{"value":"Llevo carga","label":"Llevo carga / equipos"},{"value":"Flexibilidad","label":"Necesito flexibilidad"},{"value":"Accesibilidad","label":"Accesibilidad / movilidad reducida"}],"help":"Marca máximo 3","columns":2,"maxSelections":3,"code":"E1","num":"36."},{"type":"multi","label":"Incidentes en el último año en tus trayectos","options":[{"value":"Accidente/caída","label":"Accidente / caída"},"Casi-accidente",{"value":"Inseguridad/acoso","label":"Inseguridad / acoso"},{"value":"Robo/daños","label":"Robo / daños"},{"value":"Conflictos","label":"Conflictos con otros usuarios"},"Ninguno"],"columns":2,"code":"E2","num":"37."}]},{"id":"F","name":"Módulo · Coche y moto","conditional":true,"banner":"Módulo de \u003cem>coche y moto\u003c/em> · si vas de pasajero, escoge la opción que usa tu conductor","showIf":{"anyOf":[{"question":"C1","in":["Coche","Moto/ciclomotor"]},{"question":"C2","in":["Coche","Moto/ciclomotor"]},{"question":"C4","in":["Coche","Moto/ciclomotor"]},{"question":"C4b","in":["Coche","Moto/ciclomotor"]},{"question":"C4c","intersects":["Coche","Moto/ciclomotor"]},{"question":"C4d","intersects":["Coche","Moto/ciclomotor"]}]},"title":"Tus desplazamientos en vehículo privado","titleHtml":"Tus desplazamientos en \u003cem>vehículo privado\u003c/em>","questions":[{"type":"single","label":"¿Cómo viajas normalmente?","options":["Conduzco solo","Conduzco y llevo pasajeros","Voy como pasajero"],"code":"F1","num":"38."},{"type":"single","label":"Ocupación habitual del coche","options":["1","2","3",{"value":"4+","label":"4 o más"}],"columns":3,"code":"F2","num":"39."},{"type":"single","label":"¿Te interesaría coche compartido con compañeros?","options":["Sí","No","Depende"],"help":"Si hubiera una herramienta de matching dentro de la empresa","columns":3,"code":"F3","num":"40."},{"type":"multi","label":"¿Qué te frena para compartir coche?","options":["Horarios variables","Necesito flexibilidad",{"value":"Privacidad/seguridad","label":"Privacidad / seguridad"},"No conozco a quién","No me compensa","Logística","Otro"],"help":"Marca máximo 3","columns":2,"maxSelections":3,"code":"F4","num":"41."},{"type":"text","label":"¿Qué otra cosa te frena para compartir coche?","help":"Solo si has marcado «Otro»","maxLength":120,"placeholder":"Escríbelo aquí","showIf":{"anyOf":[{"question":"F4","intersects":["Otro"]}]},"code":"F4_otro","num":"41.1"},{"type":"single","label":"Tipo de combustible del vehículo","options":["Gasolina","Diésel","Híbrido","Híbrido enchufable","Eléctrico","No lo sé"],"help":"De tu coche o moto","columns":2,"code":"F5","num":"42."}]},{"id":"G","name":"Módulo · Transporte público","conditional":true,"banner":"Módulo de \u003cem>transporte público\u003c/em>","showIf":{"anyOf":[{"question":"C1","in":["Transporte público","Lanzadera"]},{"question":"C2","in":["Transporte público","Lanzadera"]},{"question":"C4","in":["Transporte público","Lanzadera"]},{"question":"C4b","in":["Transporte público","Lanzadera"]},{"question":"C4c","intersects":["Transporte público","Lanzadera"]},{"question":"C4d","intersects":["Transporte público","Lanzadera"]}]},"title":"Tu uso del transporte público","titleHtml":"Tu uso del \u003cem>transporte público\u003c/em>","questions":[{"type":"single","label":"Tiempo a pie a la parada / estación principal","options":[{"value":"\u003c5 min","label":"\u003c 5 min"},{"value":"5-10 min","label":"5 - 10 min"},{"value":"11-15 min","label":"11 - 15 min"},{"value":">15 min","label":"> 15 min"}],"columns":2,"code":"G2","num":"43."},{"type":"single","label":"Número de transbordos habituales","options":["0","1","2",{"value":"3+","label":"3 o más"}],"columns":3,"code":"G3","num":"44."},{"type":"multi","label":"Principal problema del TP","options":["Frecuencia","Retrasos","Saturación","Coste","Seguridad",{"value":"Horarios","label":"Horarios incompatibles"},{"value":"Último km","label":"Último km difícil"},"Otro"],"help":"Marca máximo 2","columns":2,"maxSelections":2,"code":"G4","num":"45."},{"type":"text","label":"¿Qué otro problema tiene el transporte público?","help":"Solo si has marcado «Otro»","maxLength":120,"placeholder":"Escríbelo aquí","showIf":{"anyOf":[{"question":"G4","intersects":["Otro"]}]},"code":"G4_otro","num":"45.1"},{"type":"single","label":"¿Cómo es el acceso desde la parada/estación hasta el centro de trabajo?","options":["Cómodo y seguro","Largo pero aceptable","Inseguro",{"value":"Mal acondicionado","label":"Mal acondicionado (aceras, iluminación...)"}],"help":"\"Última milla\" — el tramo final a pie","columns":2,"code":"G5","num":"46."}]},{"id":"H","name":"Módulo · Bici / VMP","conditional":true,"banner":"Módulo de \u003cem>bici, eBike y VMP\u003c/em>","showIf":{"anyOf":[{"question":"C1","in":["Bicicleta","Patinete/VMP"]},{"question":"C2","in":["Bicicleta","Patinete/VMP"]},{"question":"C4","in":["Bicicleta","Patinete/VMP"]},{"question":"C4b","in":["Bicicleta","Patinete/VMP"]},{"question":"C4c","intersects":["Bicicleta","Patinete/VMP"]},{"question":"C4d","intersects":["Bicicleta","Patinete/VMP"]}]},"title":"Tu uso de bici / eBike / VMP","titleHtml":"Tu uso de \u003cem>bici / eBike / VMP\u003c/em>","questions":[{"type":"multi","label":"¿Qué te limita más?","options":["Infraestructura insuficiente","Tráfico peligroso","Robo al aparcar",{"value":"Falta duchas","label":"Falta duchas / taquillas"},"Clima","Distancia","Pendiente","Otro"],"help":"Marca máximo 3","columns":2,"maxSelections":3,"code":"H1","num":"47."},{"type":"text","label":"¿Qué otra cosa te limita?","help":"Solo si has marcado «Otro»","maxLength":120,"placeholder":"Escríbelo aquí","showIf":{"anyOf":[{"question":"H1","intersects":["Otro"]}]},"code":"H1_otro","num":"47.1"},{"type":"likert","label":"¿Usarías más la bici / eBike / VMP si hubiera...?","rows":[{"name":"H2_aparc","label":"Aparcamiento seguro cerrado"},{"name":"H2_ruta","label":"Ruta segura / carril hasta la sede"},{"name":"H2_duchas","label":"Duchas / vestuarios / taquillas"},{"name":"H2_ayuda","label":"Ayuda económica (compra / mantenimiento)"},{"name":"H2_form","label":"Formación / rutas recomendadas"}],"rowsHeader":"","code":"H2","scale":["Sí","No","Depende"],"num":"48."}]},{"id":"I","name":"Sección I · Desplazamientos en jornada","title":"Desplazamientos en jornada","titleHtml":"Desplazamientos \u003cem>en jornada\u003c/em>","questions":[{"type":"single","label":"¿Te desplazas por trabajo durante la jornada?","options":[{"value":"Nunca/casi nunca","label":"Nunca / casi nunca"},{"value":"1-2 veces/mes","label":"1 - 2 veces / mes"},{"value":"1-2 veces/semana","label":"1 - 2 veces / semana"},{"value":"3+ veces/semana","label":"3+ veces / semana"}],"columns":2,"code":"I1","num":"49."},{"type":"multi","label":"Modo habitual en esos desplazamientos","options":["A pie",{"value":"Bicicleta","label":"Bicicleta / bicicleta eléctrica"},{"value":"Patinete/VMP","label":"Patinete / VMP"},"Transporte público",{"value":"Lanzadera","label":"Autobús-Lanzadera"},{"value":"Coche","label":"Coche (propio, compartido, empresa)"},{"value":"Moto/ciclomotor","label":"Moto / ciclomotor"},{"value":"Taxi/VTC","label":"Taxi / VTC"},"Otro"],"columns":2,"code":"I2","num":"50."},{"type":"single","label":"¿Qué modo de transporte público usas en esos desplazamientos?","options":[{"value":"Bus","label":"Autobús (urbano o interurbano)"},{"value":"Tren/Cercanías","label":"Tren / Cercanías"}],"columns":2,"showIf":{"anyOf":[{"question":"I2","intersects":["Transporte público"]}]},"code":"I2_tp","num":"51."},{"type":"text","label":"¿Qué otro modo usas en esos desplazamientos?","help":"Solo si has marcado «Otro»","maxLength":120,"placeholder":"Escríbelo aquí","showIf":{"anyOf":[{"question":"I2","intersects":["Otro"]}]},"code":"I2_otro","num":"51.1"},{"type":"single","label":"¿Es imprescindible tu modo de transporte principal para el trabajo?","options":["Sí","A veces","No"],"columns":3,"code":"I3","num":"52."}]},{"id":"K","name":"Sección K · Actividades encadenadas","intro":"Encadenar otras tareas al desplazamiento al trabajo (gimnasio, compra, colegio, etc.)","title":"Actividades encadenadas","titleHtml":"Actividades \u003cem>encadenadas\u003c/em>","questions":[{"type":"single","label":"¿Realizas otras actividades durante tu desplazamiento al trabajo?","options":[{"value":"No, voy directo","label":"No, voy directo/a"},"Sí, en la ida","Sí, en la vuelta","Sí, en ambos trayectos"],"columns":2,"required":true,"code":"K1","num":"53."},{"type":"multi","label":"¿Qué tipo de actividades realizas habitualmente?","options":[{"value":"Llevar/recoger hijos","label":"Llevar/recoger hijos (colegio, guardería)"},"Cuidado de personas dependientes",{"value":"Compras","label":"Compras (supermercado, recados)"},{"value":"Actividades personales","label":"Actividades personales (gimnasio, gestiones...)"},"Segunda actividad laboral","Otro"],"help":"Marca máximo 3","showIf":{"anyOf":[{"question":"K1","in":["Sí, en la ida","Sí, en la vuelta","Sí, en ambos trayectos"]}]},"columns":2,"maxSelections":3,"code":"K2","num":"54."},{"type":"text","label":"¿Qué otra actividad realizas?","help":"Solo si has marcado «Otro»","maxLength":120,"placeholder":"Escríbelo aquí","showIf":{"anyOf":[{"question":"K2","intersects":["Otro"]}]},"code":"K2_otro","num":"54.1"},{"type":"single","label":"¿Estas actividades condicionan tu elección de transporte?","options":[{"value":"Totalmente","label":"Totalmente (sin ellas cambiaría de modo)"},"Bastante","Algo","Nada"],"showIf":{"anyOf":[{"question":"K1","in":["Sí, en la ida","Sí, en la vuelta","Sí, en ambos trayectos"]}]},"columns":2,"code":"K3","num":"55."}]},{"id":"J","name":"Sección J · Potencial de cambio","title":"Potencial de cambio y medidas","titleHtml":"Potencial de \u003cem>cambio\u003c/em> y medidas","questions":[{"type":"single","label":"¿Qué peso tiene el impacto ambiental en tu elección de transporte?","options":["Ninguno","Bajo","Medio","Alto"],"columns":2,"required":true,"code":"J0","num":"56."},{"type":"single","label":"Si existieran alternativas mejores, ¿cambiarías tu modo principal?","options":["Sí, fácilmente","Sí, con condiciones","Difícil","No cambiaría"],"columns":2,"required":true,"code":"J1","num":"57."},{"type":"multi","label":"¿Qué combinación de factores te haría cambiar de modo?","options":[{"value":"Ahorro de tiempo","label":"Ahorro de tiempo (≥ 10-15 min)"},{"value":"Ahorro económico","label":"Ahorro económico (≥ 30-50 €/mes)"},"Mayor seguridad","Menos estrés",{"value":"Beneficios/incentivos empresa","label":"Beneficios / incentivos de la empresa"},{"value":"Mejor infraestructura","label":"Mejor infraestructura (carriles, paradas...)"},"Más flexibilidad horaria","Compromiso ambiental"],"help":"Marca máximo 3","showIf":{"anyOf":[{"question":"J1","in":["Sí, fácilmente","Sí, con condiciones","Difícil"]}]},"columns":2,"maxSelections":3,"code":"J1b","num":"58."},{"type":"multi","label":"¿A qué estarías dispuesto/a a pasar?","options":["Transporte público","Lanzadera","Caminar",{"value":"Bici/eBike/VMP","label":"Bici / eBike / VMP"},"Coche compartido","Otro"],"help":"Total o parcialmente. Marca todos los que apliquen","columns":2,"showIf":{"anyOf":[{"question":"J1","in":["Sí, fácilmente","Sí, con condiciones","Difícil"]}]},"code":"J2","num":"59."},{"type":"text","label":"¿A qué otra cosa estarías dispuesto/a a pasar?","help":"Solo si has marcado «Otro»","maxLength":120,"placeholder":"Escríbelo aquí","showIf":{"anyOf":[{"question":"J2","intersects":["Otro"]}]},"code":"J2_otro","num":"59.1"},{"type":"likert","label":"Impacto de posibles medidas","help":"1 = nada de impacto · 5 = mucho impacto","rows":[{"name":"J3_tp","label":"Subvención / beneficio para TP"},{"name":"J3_lanz","label":"Lanzadera desde estación"},{"name":"J3_carp","label":"Plataforma de coche compartido"},{"name":"J3_aparc","label":"Aparcabicis seguro + cubierto"},{"name":"J3_duch","label":"Duchas / taquillas"},{"name":"J3_gest","label":"Gestión del aparcamiento"},{"name":"J3_flex","label":"Flexibilidad horaria"},{"name":"J3_seg","label":"Mejoras de seguridad e iluminación"},{"name":"J3_inc","label":"Incentivo por venir sin coche"},{"name":"J3_info","label":"Información de rutas / planificador"}],"rowsHeader":"Medida","code":"J3","scale":["1","2","3","4","5"],"num":"60."},{"type":"textarea","label":"Comentarios / propuestas","help":"Opcional. Cualquier sugerencia que pueda mejorar tu desplazamiento al trabajo","placeholder":"Tu opinión nos importa...","code":"J5","num":"61."}]}]},"supabase":{"url":"https://jblmgqwdcwvsquydepiw.supabase.co","anonKey":"sb_publishable_pf0vsZIrd8ex5hwPMC4n6g_bQfC4__d"}};</script>
+<script>// ranking.js — widget de podio (ranking top-3). Arrastrar en escritorio, pulsar
+// en móvil. Cada slot lleno genera un input oculto <code>_rank_N para el envío.
+// Portado fiel del comportamiento de reference/.
+
+window.SurveyRanking = (function () {
+  'use strict';
+
+  function notifyProgress() {
+    if (typeof window.__surveyProgress === 'function') window.__surveyProgress();
+  }
+
+  function setupWrap(wrap) {
+    const name = wrap.dataset.ranking;
+    const podium = wrap.querySelector('[data-zone="podium"]');
+    const pool = wrap.querySelector('[data-zone="pool"]');
+    const slots = podium.querySelectorAll('.podium-slot');
+
+    function rebuildRanking() {
+      wrap.querySelectorAll('input[type="hidden"]').forEach(h => h.remove());
+      slots.forEach((slot, i) => {
+        const item = slot.querySelector('.ranking-item');
+        const empty = slot.querySelector('.podium-slot-empty-text');
+        if (item) {
+          slot.classList.add('filled');
+          if (empty) empty.style.display = 'none';
+          const h = document.createElement('input');
+          h.type = 'hidden';
+          h.name = `${name}_rank_${i + 1}`;
+          h.value = item.dataset.value;
+          wrap.appendChild(h);
+        } else {
+          slot.classList.remove('filled');
+          if (empty) empty.style.display = '';
+        }
+      });
+      notifyProgress();
+    }
+
+    function ensureRemoveBtn(item) {
+      if (item.querySelector('.remove-btn')) return;
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'remove-btn';
+      btn.innerHTML = '✕';
+      btn.title = 'Quitar del podio';
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        pool.appendChild(item);
+        btn.remove();
+        rebuildRanking();
+      });
+      item.appendChild(btn);
+    }
+
+    function placeInFirstEmptySlot(item) {
+      for (const slot of slots) {
+        if (!slot.querySelector('.ranking-item')) {
+          ensureRemoveBtn(item);
+          slot.appendChild(item);
+          rebuildRanking();
+          return true;
+        }
+      }
+      return false;
+    }
+
+    function returnToPool(item) {
+      const btn = item.querySelector('.remove-btn');
+      if (btn) btn.remove();
+      pool.appendChild(item);
+      rebuildRanking();
+    }
+
+    let dragged = null;
+    wrap.querySelectorAll('.ranking-item').forEach(item => {
+      item.addEventListener('dragstart', (e) => {
+        dragged = item;
+        item.classList.add('dragging');
+        e.dataTransfer.effectAllowed = 'move';
+        try { e.dataTransfer.setData('text/plain', item.dataset.value); } catch (_) {}
+      });
+      item.addEventListener('dragend', () => {
+        item.classList.remove('dragging');
+        dragged = null;
+      });
+      item.addEventListener('click', (e) => {
+        if (e.target.classList.contains('remove-btn')) return;
+        if (item.parentElement === pool) placeInFirstEmptySlot(item);
+        else returnToPool(item);
+      });
+    });
+
+    slots.forEach(slot => {
+      slot.addEventListener('dragover', (e) => { e.preventDefault(); slot.classList.add('drag-over'); });
+      slot.addEventListener('dragleave', () => slot.classList.remove('drag-over'));
+      slot.addEventListener('drop', (e) => {
+        e.preventDefault();
+        slot.classList.remove('drag-over');
+        if (!dragged) return;
+        const existing = slot.querySelector('.ranking-item');
+        if (existing && existing !== dragged) returnToPool(existing);
+        ensureRemoveBtn(dragged);
+        slot.appendChild(dragged);
+        rebuildRanking();
+      });
+    });
+
+    pool.addEventListener('dragover', (e) => { e.preventDefault(); pool.classList.add('drag-over'); });
+    pool.addEventListener('dragleave', () => pool.classList.remove('drag-over'));
+    pool.addEventListener('drop', (e) => {
+      e.preventDefault();
+      pool.classList.remove('drag-over');
+      if (dragged) returnToPool(dragged);
+    });
+  }
+
+  function init() {
+    document.querySelectorAll('.ranking-wrap').forEach(setupWrap);
+  }
+
+  return { init };
+})();
+</script>
+<script>// survey.js — pinta la encuesta desde el esquema embebido por el generador
+// (window.__IMPULSO_SURVEY: slug + schema + claves públicas de Supabase) y
+// gestiona condicionales, progreso, límites de selección y envío directo a
+// Supabase. Reproduce el markup de reference/ tal cual. Esta página solo vive
+// dentro de encuesta-<slug>.html; no hay servidor propio detrás.
+
+(function () {
+  'use strict';
+
+  const BOOT = window.__IMPULSO_SURVEY || null;
+  const slug = BOOT ? BOOT.slug : 'demo';
+  const form = document.getElementById('surveyForm');
+  const sectionsEl = document.getElementById('surveySections');
+  const progressFill = document.getElementById('progressFill');
+  const progressPct = document.getElementById('progressPct');
+  const progressSection = document.getElementById('progressSection');
+  const successScreen = document.getElementById('successScreen');
+
+  let schema = null;
+
+  // ---------- helpers ----------
+  function escapeHtml(value) {
+    return String(value ?? '')
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  }
+  function escapeAttr(value) {
+    return escapeHtml(value).replace(/"/g, '&quot;');
+  }
+  function optionVL(option) {
+    return typeof option === 'string' ? { value: option, label: option } : option;
+  }
+
+  // ---------- renderers (markup fiel a reference/) ----------
+  function renderOption(question, option) {
+    const { value, label } = optionVL(option);
+    const type = question.type === 'single' ? 'radio' : 'checkbox';
+    const required = question.type === 'single' && question.required ? ' required' : '';
+    const dataMax = question.maxSelections ? ` data-max="${question.maxSelections}"` : '';
+    return `<label class="opt"><input type="${type}" name="${question.code}" value="${escapeAttr(value)}"${required}${dataMax}><span>${escapeHtml(label)}</span></label>`;
+  }
+
+  function renderOptions(question) {
+    const cols = question.columns === 3 ? ' grid-3' : question.columns === 2 ? ' grid-2' : '';
+    return `<div class="options${cols}">${question.options.map(o => renderOption(question, o)).join('')}</div>`;
+  }
+
+  function renderLikert(question) {
+    const head = `<tr><th>${escapeHtml(question.rowsHeader || '')}</th>${question.scale.map(s => `<th>${escapeHtml(s)}</th>`).join('')}</tr>`;
+    const rows = question.rows.map(row =>
+      `<tr><td>${escapeHtml(row.label)}</td>${question.scale.map(s =>
+        `<td><input type="radio" name="${row.name}" value="${escapeAttr(s)}"></td>`).join('')}</tr>`
+    ).join('');
+    return `<table class="likert-table"><thead>${head}</thead><tbody>${rows}</tbody></table>`;
+  }
+
+  const SLOT_TEXT = ['Arrastra aquí la opción más importante', 'Arrastra aquí la segunda', 'Arrastra aquí la tercera'];
+  function renderRanking(question) {
+    const slotLabels = question.slotLabels || SLOT_TEXT;
+    const poolLabel = question.poolLabel || 'Opciones disponibles';
+    const slots = [0, 1, 2].map(i =>
+      `<div class="podium-slot" data-slot="${i}"><div class="podium-rank r${i + 1}">${i + 1}</div><span class="podium-slot-empty-text">${escapeHtml(slotLabels[i] || '')}</span></div>`
+    ).join('');
+    const items = question.options.map(o => {
+      const { value, label } = optionVL(o);
+      return `<div class="ranking-item" draggable="true" data-value="${escapeAttr(value)}"><span class="grip">⋮⋮</span>${escapeHtml(label)}</div>`;
+    }).join('');
+    return `<div class="ranking-wrap" data-ranking="${question.code}" data-max="${question.max}">
+      <div class="ranking-section-label">Top ${question.max} — tu prioridad</div>
+      <div class="ranking-podium" data-zone="podium">${slots}</div>
+      <div class="ranking-section-label" style="margin-top: 8px;">${escapeHtml(poolLabel)}</div>
+      <div class="ranking-pool" data-zone="pool">${items}</div>
+      <div class="ranking-help">En móvil: pulsa una opción del listado para añadirla al siguiente puesto del podio. Pulsa de nuevo para quitarla.</div>
+    </div>`;
+  }
+
+  function renderBody(question) {
+    switch (question.type) {
+      case 'single':
+      case 'multi':
+        return renderOptions(question);
+      case 'text':
+        return `<input type="text" class="text-input" name="${question.code}"`
+          + `${question.pattern ? ` pattern="${escapeAttr(question.pattern)}"` : ''}`
+          + `${question.maxLength ? ` maxlength="${question.maxLength}"` : ''}`
+          + `${question.placeholder ? ` placeholder="${escapeAttr(question.placeholder)}"` : ''}`
+          + `${question.required ? ' required' : ''}>`;
+      case 'number':
+        return `<input type="number" class="number-input" name="${question.code}"`
+          + `${question.min != null ? ` min="${question.min}"` : ''}`
+          + `${question.max != null ? ` max="${question.max}"` : ''}`
+          + `${question.step != null ? ` step="${question.step}"` : ''}`
+          + `${question.placeholder ? ` placeholder="${escapeAttr(question.placeholder)}"` : ''}`
+          + `${question.required ? ' required' : ''}>`;
+      case 'textarea':
+        return `<textarea class="textarea-input" name="${question.code}"${question.placeholder ? ` placeholder="${escapeAttr(question.placeholder)}"` : ''}></textarea>`;
+      case 'likert':
+        return renderLikert(question);
+      case 'ranking':
+        return renderRanking(question);
+      default:
+        return '';
+    }
+  }
+
+  function renderQuestion(question) {
+    const code = question.num === '' ? '' : `<span class="q-code">${question.num || question.code}</span>`;
+    const parent = question.showIf && (question.showIf.anyOf || question.showIf.allOf || [])[0];
+    const parentCode = parent && parent.question ? String(parent.question).replace(/_rank_\d+$/, '') : '';
+    const fixed = question.numFixed ? ` data-fixed="${escapeAttr(question.numFixed)}"` : '';
+    // help y banner admiten HTML del esquema (p. ej. <strong>, <em>); es contenido propio de config.
+    const help = question.help ? `<div class="q-help">${question.help}</div>` : '';
+    const conditional = question.showIf ? ' conditional-q' : '';
+    return `<div class="q${conditional}" data-q="${question.code}"${parentCode ? ` data-parent="${parentCode}"` : ''}${fixed}>`
+      + `<label class="q-label">${code}${escapeHtml(question.label)}</label>${help}${renderBody(question)}</div>`;
+  }
+
+  function renderSection(section, index) {
+    const numLabel = section.conditional ? 'Módulo' : 'Sección';
+    // la etiqueta pequeña usa la letra de la sección (A, B, C…), no un ordinal
+    const num = section.id || String(index).padStart(2, '0');
+    const banner = section.conditional
+      ? `<div class="module-banner"><div class="dot"></div><div>${section.banner || ''}</div></div>`
+      : '';
+    const intro = section.intro
+      ? `<p style="font-size: 13px; color: var(--text-muted); margin-bottom: 28px; max-width: 580px; margin-top: -16px;">${escapeHtml(section.intro)}</p>`
+      : '';
+    const cls = section.conditional ? 'section conditional' : 'section';
+    const id = section.conditional ? ` id="module-${section.id}"` : '';
+    const title = section.titleHtml || escapeHtml(section.title);
+    return `<section class="${cls}" data-section="${section.id}" data-name="${escapeAttr(section.name)}"${id}>`
+      + `${banner}<div class="section-num">${numLabel} ${num}</div>`
+      + `<h2 class="section-title">${title}</h2>${intro}`
+      + `${section.questions.map(renderQuestion).join('')}</section>`;
+  }
+
+  function buildForm() {
+    sectionsEl.innerHTML = schema.sections.map((section, i) => renderSection(section, i + 1)).join('');
+  }
+
+  // ---------- estado / lógica ----------
+  function getValue(code) {
+    const inputs = form.querySelectorAll(`[name="${code}"]`);
+    if (!inputs.length) return null;
+    const first = inputs[0];
+    if (first.type === 'radio') {
+      const checked = form.querySelector(`[name="${code}"]:checked`);
+      return checked ? checked.value : null;
+    }
+    if (first.type === 'checkbox') {
+      return Array.from(form.querySelectorAll(`[name="${code}"]:checked`)).map(i => i.value);
+    }
+    return first.value;
+  }
+
+  function conditionTrue(condition) {
+    const value = getValue(condition.question);
+    if (condition.in) {
+      const values = Array.isArray(value) ? value : [value];
+      return condition.in.some(x => values.includes(x));
+    }
+    if (condition.intersects) {
+      const values = Array.isArray(value) ? value : (value ? [value] : []);
+      return condition.intersects.some(x => values.includes(x));
+    }
+    return false;
+  }
+
+  function evalShowIf(showIf) {
+    if (!showIf) return true;
+    if (showIf.anyOf) return showIf.anyOf.some(conditionTrue);
+    if (showIf.allOf) return showIf.allOf.every(conditionTrue);
+    return true;
+  }
+
+  function evalConditionals() {
+    schema.sections.forEach(section => {
+      if (section.conditional) {
+        const el = sectionsEl.querySelector(`[data-section="${section.id}"]`);
+        if (el) el.classList.toggle('show', evalShowIf(section.showIf));
+      }
+      section.questions.forEach(question => {
+        if (!question.showIf) return;
+        const el = sectionsEl.querySelector(`[data-q="${question.code}"]`);
+        if (!el) return;
+        const show = evalShowIf(question.showIf);
+        el.style.display = show ? '' : 'none';
+        if (!show) el.querySelectorAll('input').forEach(i => { if (i.checked) i.checked = false; });
+      });
+    });
+    renumber();
+    updateProgress();
+  }
+
+  // Numeración de lo que se ve: las secciones ocultas no gastan letra y las
+  // preguntas ocultas no gastan número. Las condicionales cuelgan de la
+  // pregunta que las dispara (13.1, 13.2), así el orden nunca salta.
+  const ABC = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+  const ABCmin = 'abcdefghijklmnopqrstuvwxyz';
+  const ROMAN = ['I','II','III','IV','V','VI','VII','VIII','IX','X','XI','XII'];
+  function renumber() {
+    const sections = Array.from(sectionsEl.querySelectorAll('.section'))
+      .filter(s => !s.classList.contains('conditional') || s.classList.contains('show'));
+    // Las secciones fijas llevan letras seguidas y numeran preguntas; los
+    // módulos llevan romanos y sus preguntas van en código, sin gastar número.
+    let letterIdx = 0, romanIdx = 0, main = 0;
+    const numByCode = {}, kids = {};
+    sections.forEach(section => {
+      const isModule = section.classList.contains('conditional');
+      const label = isModule ? 'Módulo' : 'Sección';
+      const tag = isModule
+        ? (ROMAN[romanIdx] || String(romanIdx + 1), ROMAN[romanIdx++] || String(romanIdx))
+        : (ABC[letterIdx++] || String(letterIdx));
+      const numEl = section.querySelector('.section-num');
+      if (numEl) numEl.textContent = label + ' ' + tag;
+      const title = section.querySelector('.section-title');
+      if (title) section.dataset.name = label + ' ' + tag + ' · ' + title.textContent.trim();
+      let subLetter = 0;
+      Array.from(section.querySelectorAll('.q')).forEach(q => {
+        if (q.style.display === 'none') return;
+        const parentCode = q.dataset.parent;
+        // solo cuelga de su disparador si está en la misma sección; si el
+        // disparador vive fuera (los módulos dependen de la sección C), la
+        // pregunta usa el código del módulo.
+        const parentInside = parentCode && section.querySelector('[data-q="' + parentCode + '"]');
+        const base = parentInside ? numByCode[parentCode] : null;
+        let num, chipText;
+        if (base) {                       // cuelga de otra pregunta: 13.1, II.b.1
+          kids[parentCode] = (kids[parentCode] || 0) + 1;
+          num = base + '.' + kids[parentCode];
+          chipText = num;
+        } else if (isModule) {            // dentro de módulo: código, no número
+          num = tag + '.' + (q.dataset.fixed || (ABC[subLetter++] || String(subLetter)));
+          chipText = num;
+        } else {
+          num = String(++main);
+          chipText = num + '.';
+        }
+        numByCode[q.dataset.q] = num;
+        const chip = q.querySelector('.q-code');
+        if (chip) chip.textContent = chipText;
+      });
+    });
+  }
+
+  function setupMaxSelections() {
+    sectionsEl.querySelectorAll('input[type="checkbox"][data-max]').forEach(input => {
+      input.addEventListener('change', () => {
+        const max = parseInt(input.dataset.max, 10);
+        const checked = form.querySelectorAll(`input[name="${input.name}"]:checked`);
+        if (checked.length > max) {
+          input.checked = false;
+          const opt = input.closest('.opt');
+          opt.style.transition = 'background 0.4s';
+          opt.style.background = '#FFD8D2';
+          setTimeout(() => { opt.style.background = ''; }, 400);
+        }
+      });
+    });
+  }
+
+  // Una pregunta cuenta como respondida en cuanto tiene algo marcado o escrito.
+  function preguntaRespondida(q) {
+    const marcables = q.querySelectorAll('input[type="radio"], input[type="checkbox"]');
+    if (marcables.length) return Array.from(marcables).some(i => i.checked);
+    const campos = q.querySelectorAll('input[type="text"], input[type="number"], textarea');
+    if (campos.length) return Array.from(campos).some(i => i.value && String(i.value).trim());
+    const ocultos = q.querySelectorAll('input[type="hidden"]');   // podio del ranking
+    return Array.from(ocultos).some(i => i.value);
+  }
+
+  // El progreso se reparte a partes iguales entre las secciones visibles: cada
+  // una vale lo mismo y su trozo se llena según lo que lleve respondido.
+  function updateProgress() {
+    const visibleSections = Array.from(sectionsEl.querySelectorAll('.section'))
+      .filter(s => !s.classList.contains('conditional') || s.classList.contains('show'));
+
+    // Solo cuentan las secciones fijas: los módulos aparecen o no según las
+    // respuestas y desplazarían la barra hacia atrás al abrirse.
+    const fijas = visibleSections.filter(s => !s.classList.contains('conditional'));
+    const trozo = fijas.length ? 100 / fijas.length : 0;
+    let total = 0;
+    fijas.forEach(section => {
+      const preguntas = Array.from(section.querySelectorAll('.q')).filter(q => q.style.display !== 'none');
+      if (!preguntas.length) { total += trozo; return; }
+      const hechas = preguntas.filter(preguntaRespondida).length;
+      total += trozo * (hechas / preguntas.length);
+    });
+
+    const pct = Math.round(total);
+    progressFill.style.width = pct + '%';
+    progressPct.textContent = pct + '% completado';
+
+    const scrollY = window.scrollY + 100;
+    let current = visibleSections[0];
+    visibleSections.forEach(section => { if (section.offsetTop <= scrollY) current = section; });
+    if (current) progressSection.textContent = current.dataset.name;
+  }
+
+  window.__surveyProgress = function () { evalConditionals(); };  // el podio del ranking avisa por aquí: re-evaluar condiciones (evalConditionals llama a updateProgress)
+
+  function setupSubmit() {
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const formData = new FormData(form);
+      const response = {};
+      for (const [key, value] of formData.entries()) {
+        if (response[key] !== undefined) {
+          if (Array.isArray(response[key])) response[key].push(value);
+          else response[key] = [response[key], value];
+        } else {
+          response[key] = value;
+        }
+      }
+      response._timestamp = new Date().toISOString();
+      response._id = 'r_' + Date.now() + '_' + Math.random().toString(36).slice(2, 8);
+
+      try {
+        // La anon key es pública por diseño; la privacidad depende de la
+        // policy RLS de solo insert en Supabase (el token de lectura del
+        // editor nunca viaja en esta página).
+        function supabaseRestUrl(value) {
+          let clean = String(value || '').trim().replace(/\/+$/, '');
+          if (!/^https?:\/\//i.test(clean)) clean = `https://${clean}`;
+          clean = clean.replace(/\/(rest\/v1|v1)$/i, '');
+          return `${clean}/rest/v1`;
+        }
+        const { url, anonKey } = BOOT.supabase;
+        const record = {
+          response_id: response._id,
+          campaign_slug: slug,
+          payload: response
+        };
+        const res = await fetch(`${supabaseRestUrl(url)}/survey_responses`, {
+          method: 'POST',
+          headers: {
+            apikey: anonKey,
+            authorization: `Bearer ${anonKey}`,
+            'content-type': 'application/json',
+            prefer: 'return=minimal'
+          },
+          body: JSON.stringify(record)
+        });
+        if (!res.ok) throw new Error(await res.text());
+      } catch (err) {
+        console.error('No se pudo registrar la respuesta:', err);
+        alert('No se pudo registrar la respuesta. Revisa la conexión e inténtalo de nuevo.');
+        return;
+      }
+
+      form.style.display = 'none';
+      document.querySelector('.progress-wrap').style.display = 'none';
+      successScreen.classList.add('show');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  }
+
+  // ---------- init ----------
+  function init(data) {
+    schema = data.schema;
+    buildForm();
+    window.SurveyRanking.init();
+    form.addEventListener('change', evalConditionals);
+    form.addEventListener('input', updateProgress);
+    window.addEventListener('scroll', updateProgress);
+    setupMaxSelections();
+    setupSubmit();
+    evalConditionals();
+    updateProgress();
+  }
+
+  if (BOOT) {
+    init(BOOT);
+  } else {
+    // esta página solo funciona embebida en una encuesta generada por el editor;
+    // sin boot se muestra el mismo mensaje de siempre (texto congelado)
+    sectionsEl.innerHTML = '<p style="padding:40px 0;color:var(--text-muted);">No se pudo cargar la encuesta. Inténtalo de nuevo más tarde.</p>';
+  }
+})();
+</script>
+</body>
+</html>
